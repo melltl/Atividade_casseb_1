@@ -3,3 +3,7 @@ uvicorn
 pytest
 flake8
 httpx
+python-jose
+passlib
+bcrypt
+python-multipart

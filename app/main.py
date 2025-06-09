@@ -1,13 +1,30 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Depends, HTTPException
+from fastapi.security import OAuth2PasswordRequestForm
+#from app.auth import authenticate_user, create_access_token, get_current_user
+from datetime import timedelta
+from auth import authenticate_user, create_access_token, get_current_user
 
-app = FastAPI(title="Minha API", description="Exemplo de API com Swagger", version="1.0")
+app = FastAPI(title="API com JWT")
+
+
+@app.post("/login")
+def login(form_data: OAuth2PasswordRequestForm = Depends()):
+    user = authenticate_user(form_data.username, form_data.password)
+    if not user:
+        raise HTTPException(status_code=400, detail="Credenciais inválidas")
+
+    access_token = create_access_token(
+        data={"sub": user["email"]},
+        expires_delta=timedelta(minutes=30)
+    )
+    return {"access_token": access_token, "token_type": "bearer"}
 
 
 @app.get("/")
-def read_root():
-    return {"mensagem": "Bem-vindo à minha API!"}
+def root():
+    return {"mensagem": "Bem-vindo à API pública!"}
 
 
-@app.get("/items/{item_id}")
-def read_item(item_id: int, q: str = None):
-    return {"item_id": item_id, "query": q}
+@app.get("/protected")
+def protected_route(user: dict = Depends(get_current_user)):
+    return {"mensagem": f"Bem-vindo, {user['email']}! Você acessou uma rota protegida."}
