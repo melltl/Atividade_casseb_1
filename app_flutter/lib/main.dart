@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart';
-import 'login_page.dart';
+import 'package:app_flutter/login_page.dart'; // <- IMPORTANTE
 
-void main() => runApp(MyApp());
+void main() {
+  runApp(MyApp());
+}
 
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'App com JWT',
-      home: LoginPage(),
+      title: 'App com API',
+      theme: ThemeData(primarySwatch: Colors.blue),
+      home: LoginPage(), // <- Aqui usa a classe que deve estar declarada/importada
     );
   }
 }
